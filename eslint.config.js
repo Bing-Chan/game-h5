@@ -15,7 +15,9 @@ export default antfu(
       semi: false
     },
     // 忽略文件
-    ignores: []
+    ignores: [],
+    // 禁用 unicorn 插件以兼容 Node.js 18
+    unicorn: false
   },
   {
     // 对所有文件都生效的规则
@@ -36,8 +38,7 @@ export default antfu(
       "no-console": "off",
       "no-debugger": "off",
       "symbol-description": "off",
-      "antfu/if-newline": "off",
-      "unicorn/no-instanceof-builtins": "off"
+      "antfu/if-newline": "off"
     }
   }
 )
