@@ -2,120 +2,68 @@ name: Build and Deploy MobVue
 
 on:
   push:
-    branches:
-      - main
-  # 允许手动触发工作流
+    branches: [master]
   workflow_dispatch:
 
 jobs:
   build-and-deploy:
-    # 运行环境
     runs-on: ubuntu-latest
-    # 权限设置
     permissions:
       contents: write
-      pages: write
-      id-token: write
 
     steps:
       # 检出代码
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          persist-credentials: false
 
-      # 设置Node.js环境
+      # 设置Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          # 使用pnpm缓存
-          cache: pnpm
-          # 缓存路径
-          cache-dependency-path: pnpm-lock.yaml
+          node-version: "18"
+          # 使用npm缓存
+          cache: npm
 
-      # 设置pnpm包管理器
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9.0.6
-          run_install: false
-          # 确保pnpm被正确添加到PATH
-          standalone: true
-
-      # 验证pnpm安装
-      - name: Verify pnpm installation
-        run: |
-          echo "Verifying pnpm installation..."
-          pnpm --version
-          which pnpm
-
-      # 安装依赖
+      # 安装项目依赖
       - name: Install dependencies
         run: |
-          echo "Installing dependencies..."
+          echo "使用npm安装pnpm..."
+          npm install -g pnpm@9.0.6
+          echo "检查pnpm安装状态..."
+          pnpm --version
+          echo "使用pnpm安装项目依赖..."
           pnpm install --frozen-lockfile
 
       # 构建项目
       - name: Build project
         run: |
-          echo "Building project..."
-          echo "Node.js version: $(node -v)"
-          echo "pnpm version: $(pnpm -v)"
-          # 启用详细输出以便调试
-          pnpm build --debug || {
-            echo "构建失败，请检查错误信息"
-            exit 1
-          }
-
-      # 验证构建产物
-      - name: Verify build
-        run: |
-          echo "Verifying build output..."
-          # 检查dist目录是否存在
-          if [ ! -d "dist" ]; then
-            echo "Error: Build directory 'dist' not found!"
-            exit 1
-          fi
-          # 列出dist目录内容
+          echo "开始构建..."
+          pnpm build
+          echo "构建完成，检查产物..."
           ls -la dist/
-          # 检查是否有关键文件
-          if [ -f "dist/index.html" ]; then
-            echo "✓ index.html found"
-          else
-            echo "✗ index.html not found"
+          if [ ! -d "dist" ] || [ ! -f "dist/index.html" ]; then
+            echo "错误：构建产物不完整"
             exit 1
           fi
-          echo "Build verified successfully!"
 
       # 部署到GitHub Pages
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          # 使用GitHub令牌进行身份验证
-          token: ${{ secrets.MOBVUE }}
-          # 部署目标分支
-          branch: gh-pages
-          # 构建产物目录
-          folder: dist
-          # 清理旧文件
-          clean: true
-          # 单提交模式
-          single-commit: true
-          # 提交信息
-          commit-message: "chore: deploy ${{ github.sha }}"
+          github_token: ${{ secrets.MOBVUE }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
+          force_orphan: true
+          commit_message: "chore: deploy ${{ github.sha }}"
 
-      # 部署成功通知
-      - name: Deployment notification
-        if: success()
+      # 部署结果通知
+      - name: Deployment result
+        if: always()
         run: |
-          echo "✅ Deployment completed successfully!"
-          echo "📚 Your site will be available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
-
-      # 部署失败通知
-      - name: Deployment failure notification
-        if: failure()
-        run: |
-          echo "❌ Deployment failed!"
-          echo "Please check the workflow logs for more details."
+          if [ ${{ job.status }} == 'success' ]; then
+            echo "✅ 部署成功！"
+          else
+            echo "❌ 部署失败，请检查日志。"
+          fi
