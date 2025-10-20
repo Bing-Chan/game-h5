@@ -134,7 +134,7 @@ onMounted(() => {
             :alt="game.name"
             class="game-image"
             un-w-full un-h-full un-object-cover un-transition-transform-300
-            @error="(e: Event) => { (e.target as HTMLImageElement).src = '/games/images/logo.png' }"
+            @error="(e: Event) => { (e.target as HTMLImageElement).src = '/agme-h5/games/images/logo.png' }"
           >
           <!-- 分类标签 -->
           <div class="game-category" un-text-primary un-absolute un-top-8px un-left-8px un-px-8px un-py-2px un-text-xs un-rounded-4px>
