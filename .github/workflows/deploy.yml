@@ -29,15 +29,27 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "20"
+          # 使用pnpm缓存
           cache: pnpm
+          # 缓存路径
+          cache-dependency-path: pnpm-lock.yaml
 
       # 设置pnpm包管理器
       - name: Setup pnpm
-        uses: pnpm/action-setup@v3
+        uses: pnpm/action-setup@v4
         with:
-          version: latest
+          version: 9.0.6
           run_install: false
+          # 确保pnpm被正确添加到PATH
+          standalone: true
+
+      # 验证pnpm安装
+      - name: Verify pnpm installation
+        run: |
+          echo "Verifying pnpm installation..."
+          pnpm --version
+          which pnpm
 
       # 安装依赖
       - name: Install dependencies
@@ -49,14 +61,30 @@ jobs:
       - name: Build project
         run: |
           echo "Building project..."
-          pnpm build
+          echo "Node.js version: $(node -v)"
+          echo "pnpm version: $(pnpm -v)"
+          # 启用详细输出以便调试
+          pnpm build --debug || {
+            echo "构建失败，请检查错误信息"
+            exit 1
+          }
 
       # 验证构建产物
       - name: Verify build
         run: |
           echo "Verifying build output..."
+          # 检查dist目录是否存在
           if [ ! -d "dist" ]; then
             echo "Error: Build directory 'dist' not found!"
+            exit 1
+          fi
+          # 列出dist目录内容
+          ls -la dist/
+          # 检查是否有关键文件
+          if [ -f "dist/index.html" ]; then
+            echo "✓ index.html found"
+          else
+            echo "✗ index.html not found"
             exit 1
           fi
           echo "Build verified successfully!"
