@@ -17,32 +17,34 @@ jobs:
         with:
           fetch-depth: 0
 
+      # 设置Node.js环境
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22.12.0
-          cache: pnpm
+          node-version: "18"
+          # 使用npm缓存
+          cache: npm
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 10.2.0
-          run_install: false
-
+      # 安装依赖
       - name: Install dependencies
-        run: pnpm install
+        run: npm install --legacy-peer-deps
 
-      - name: TypeScript Check
-        run: pnpm vue-tsc --noEmit
+      # 运行TypeScript类型检查
+      - name: TypeScript check
+        run: npx vue-tsc --noEmit
 
-      - name: ESLint Check
-        run: pnpm lint
+      # 运行ESLint检查
+      - name: ESLint check
+        run: npm run lint
 
-      - name: Run Tests
-        run: pnpm test
+      # 运行测试
+      - name: Run tests
+        run: npm test
 
-      - name: Build for production
-        run: pnpm build
+      # 构建生产环境代码
+      - name: Build production
+        run: npm run build
 
-      - name: Build for staging
-        run: pnpm build:staging
+      # 构建预发布环境代码
+      - name: Build staging
+        run: npm run build:staging

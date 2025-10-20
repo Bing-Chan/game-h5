@@ -17,25 +17,21 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22.12.0
-          cache: pnpm
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 10.2.0
+          node-version: "18"
+          # 使用npm缓存
+          cache: npm
 
       - name: Install dependencies
-        run: pnpm install
+        run: npm install --legacy-peer-deps
 
       - name: Update dependencies
-        run: pnpm update
+        run: npm update
 
       - name: Run tests
-        run: pnpm test
+        run: npm test
 
-      - name: Build
-        run: pnpm build
+      - name: Build project
+        run: npm run build
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6

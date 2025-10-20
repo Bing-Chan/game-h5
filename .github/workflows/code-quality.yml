@@ -18,16 +18,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22.12.0
-          cache: pnpm
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 10.2.0
+          node-version: "18"
+          cache: npm
 
       - name: Install dependencies
-        run: pnpm install
+        run: npm install --legacy-peer-deps
 
       - name: ESLint Review
         uses: reviewdog/action-eslint@v1
@@ -52,21 +47,17 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22.12.0
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 10.2.0
+          node-version: "18"
+          cache: npm
 
       - name: Install dependencies
-        run: pnpm install
+        run: npm install --legacy-peer-deps
 
       - name: Audit dependencies
-        run: pnpm audit --prod
+        run: npm audit --production
 
       - name: Check for outdated dependencies
-        run: pnpm outdated --json > outdated.json || true
+        run: npm outdated --json > outdated.json || true
 
       - name: Upload outdated dependencies report
         uses: actions/upload-artifact@v4
