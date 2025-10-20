@@ -68,7 +68,7 @@ function enterGame(game: Game) {
     message: `即将进入 ${game.name}`
   })
   // 打开游戏页面
-  const gameUrl = `/games/yxmb/${game.id}/index.html`
+  const gameUrl = `/game-h5/games/yxmb/${game.id}/index.html`
   window.open(gameUrl, "_blank")
 }
 

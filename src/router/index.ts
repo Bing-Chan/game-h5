@@ -1,10 +1,7 @@
 import type { RouteRecordRaw } from "vue-router"
 import { createRouter, createWebHashHistory, createWebHistory } from "vue-router"
+import { VITE_PUBLIC_PATH, VITE_ROUTER_HISTORY } from "@/common/constants/env"
 import { registerNavigationGuard } from "@/router/guard"
-
-const VITE_PUBLIC_PATH = import.meta.env.VITE_PUBLIC_PATH
-
-const VITE_ROUTER_HISTORY = import.meta.env.VITE_ROUTER_HISTORY
 
 /** 系统页面 */
 export const systemRoutes: RouteRecordRaw[] = [
@@ -202,8 +199,13 @@ export const emptyDemoRoutes: RouteRecordRaw[] = [
 
 /** 路由实例 */
 export const router = createRouter({
-  history: VITE_ROUTER_HISTORY === "hash" ? createWebHashHistory(VITE_PUBLIC_PATH) : createWebHistory(VITE_PUBLIC_PATH),
-  routes: [...systemRoutes, ...routes, ...demoRoutes, ...emptyDemoRoutes]
+  // 确保无论是hash还是history模式，都正确配置base路径
+  history: VITE_ROUTER_HISTORY === "hash"
+    ? createWebHashHistory(VITE_PUBLIC_PATH)
+    : createWebHistory(VITE_PUBLIC_PATH),
+  routes: [...systemRoutes, ...routes, ...demoRoutes, ...emptyDemoRoutes],
+  // 滚动行为
+  scrollBehavior: () => ({ top: 0 })
 })
 
 // 注册路由导航守卫

@@ -44,6 +44,9 @@ jobs:
             echo "错误：构建产物不完整"
             exit 1
           fi
+          # 创建.nojekyll文件以防止GitHub Pages使用Jekyll构建
+          echo "创建.nojekyll文件..."
+          touch dist/.nojekyll
 
       # 检查dist目录内容
       - name: Check dist contents
@@ -62,9 +65,11 @@ jobs:
           publish_branch: gh-pages
           force_orphan: true
           commit_message: "chore: deploy ${{ github.sha }}"
-          # 添加调试信息
+          # 重要：禁用Jekyll并确保不使用/docs目录
           enable_jekyll: false
           keep_files: false
+          # 显式设置发布目录为dist
+          destination_dir: /
 
       # 部署结果通知
       - name: Deployment result
