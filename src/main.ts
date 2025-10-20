@@ -5,8 +5,7 @@ import { pinia } from "@/pinia"
 import { router } from "@/router"
 import { installPlugins } from "@/plugins"
 import App from "@/App.vue"
-// vant
-import "@vant/touch-emulator"
+
 // css
 import "normalize.css"
 import "nprogress/nprogress.css"

@@ -78,6 +78,24 @@ export const routes: RouteRecordRaw[] = [
         footer: true
       }
     }
+  },
+  {
+    path: "/chat",
+    component: () => import("@/pages/chat/index.vue"),
+    name: "Chat",
+    meta: {
+      title: "聊天",
+      layout: {
+        navBar: {
+          showNavBar: false,
+          showLeftArrow: false
+        },
+        tabbar: {
+          showTabbar: true,
+          icon: "chat-o"
+        }
+      }
+    }
   }
 ]
 
