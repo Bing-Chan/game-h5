@@ -1,4 +1,4 @@
-name: Build and Deploy MobVue
+name: Build and Deploy game-h5
 
 on:
   push:
