@@ -13,6 +13,6 @@ vite.config.*.timestamp*
 # Logs
 *.log
 
-# Using pnpm and bun
-package-lock.json
+# Using npm
+# pnpm-lock.yaml
 yarn.lock
