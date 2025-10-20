@@ -109,7 +109,7 @@ onMounted(() => {
           class="category-tag"
           :class="{ active: selectedCategory === category }"
           un-inline-block un-px-16px un-py-6px un-mr-12px un-rounded-99px un-text-sm
-          :un-bg="selectedCategory === category ? 'primary-color' : 'bg-color'"
+          :un-bg="selectedCategory === category ? 'primary' : 'bg-color'"
           :un-color="selectedCategory === category ? '#fff' : 'body-text-color'"
           @click="changeCategory(category)"
         >
@@ -137,7 +137,7 @@ onMounted(() => {
             @error="(e: Event) => { (e.target as HTMLImageElement).src = '/games/images/logo.png' }"
           >
           <!-- 分类标签 -->
-          <div class="game-category" un-absolute un-top-8px un-left-8px un-px-8px un-py-2px un-text-white un-text-xs un-rounded-4px>
+          <div class="game-category" un-text-primary un-absolute un-top-8px un-left-8px un-px-8px un-py-2px un-text-xs un-rounded-4px>
             {{ game.category }}
           </div>
         </div>
