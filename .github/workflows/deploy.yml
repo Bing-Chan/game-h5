@@ -29,18 +29,15 @@ jobs:
       # 安装项目依赖
       - name: Install dependencies
         run: |
-          echo "使用npm安装pnpm..."
-          npm install -g pnpm@9.0.6
-          echo "检查pnpm安装状态..."
-          pnpm --version
-          echo "使用pnpm安装项目依赖..."
-          pnpm install --frozen-lockfile
+          echo "使用npm安装项目依赖..."
+          npm install --legacy-peer-deps
+          echo "npm版本：$(npm --version)"
 
       # 构建项目
       - name: Build project
         run: |
           echo "开始构建..."
-          pnpm build
+          npm run build
           echo "构建完成，检查产物..."
           ls -la dist/
           if [ ! -d "dist" ] || [ ! -f "dist/index.html" ]; then
