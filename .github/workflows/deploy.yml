@@ -68,8 +68,8 @@ jobs:
           # 重要：禁用Jekyll并确保不使用/docs目录
           enable_jekyll: false
           keep_files: false
-          # 显式设置发布目录为dist
-          destination_dir: /
+          # 显式设置发布目录（使用相对路径）
+          destination_dir: .
 
       # 部署结果通知
       - name: Deployment result
