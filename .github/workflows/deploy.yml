@@ -1,39 +1,93 @@
-name: Build And Deploy MobVue
+name: Build and Deploy MobVue
 
 on:
   push:
     branches:
       - main
+  # 允许手动触发工作流
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
+    # 运行环境
     runs-on: ubuntu-latest
+    # 权限设置
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
     steps:
+      # 检出代码
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
 
+      # 设置Node.js环境
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
           cache: pnpm
 
+      # 设置pnpm包管理器
       - name: Setup pnpm
         uses: pnpm/action-setup@v3
         with:
-          version: 10.2.0
+          version: latest
           run_install: false
 
-      - name: Build
+      # 安装依赖
+      - name: Install dependencies
         run: |
-          pnpm install
+          echo "Installing dependencies..."
+          pnpm install --frozen-lockfile
+
+      # 构建项目
+      - name: Build project
+        run: |
+          echo "Building project..."
           pnpm build
 
-      - name: Deploy
+      # 验证构建产物
+      - name: Verify build
+        run: |
+          echo "Verifying build output..."
+          if [ ! -d "dist" ]; then
+            echo "Error: Build directory 'dist' not found!"
+            exit 1
+          fi
+          echo "Build verified successfully!"
+
+      # 部署到GitHub Pages
+      - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
+          # 使用GitHub令牌进行身份验证
           token: ${{ secrets.MOBVUE }}
+          # 部署目标分支
           branch: gh-pages
+          # 构建产物目录
           folder: dist
+          # 清理旧文件
+          clean: true
+          # 单提交模式
+          single-commit: true
+          # 提交信息
+          commit-message: "chore: deploy ${{ github.sha }}"
+
+      # 部署成功通知
+      - name: Deployment notification
+        if: success()
+        run: |
+          echo "✅ Deployment completed successfully!"
+          echo "📚 Your site will be available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+
+      # 部署失败通知
+      - name: Deployment failure notification
+        if: failure()
+        run: |
+          echo "❌ Deployment failed!"
+          echo "Please check the workflow logs for more details."
