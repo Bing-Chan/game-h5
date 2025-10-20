@@ -45,15 +45,26 @@ jobs:
             exit 1
           fi
 
+      # 检查dist目录内容
+      - name: Check dist contents
+        run: |
+          echo "检查dist目录详细内容..."
+          find dist -type f | sort
+          echo "dist目录大小统计:"
+          du -sh dist/
+
       # 部署到GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.MOBVUE }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           publish_branch: gh-pages
           force_orphan: true
           commit_message: "chore: deploy ${{ github.sha }}"
+          # 添加调试信息
+          enable_jekyll: false
+          keep_files: false
 
       # 部署结果通知
       - name: Deployment result
